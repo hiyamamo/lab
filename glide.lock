@@ -1,0 +1,10 @@
+hash: 703cd2c44bdd7a2e62f64f633b06774a7f96c425fcfbe668e283523ce145adea
+updated: 2017-08-26T13:14:00.039437091+09:00
+imports:
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
+- name: github.com/urfave/cli
+  version: cfb38830724cc34fedffe9a2a29fb54fa9169cd1
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports: []

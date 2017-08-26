@@ -2,11 +2,14 @@ package commands
 
 import (
 	"fmt"
+	"github.com/hiyamamo/lab/git"
 	"github.com/hiyamamo/lab/gitlab"
 	"github.com/urfave/cli"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -15,10 +18,9 @@ func init() {
 }
 
 var (
-	target  string
-	project string
-	source  string
-	title   string
+	target string
+	source string
+	title  string
 )
 var mrCommand = cli.Command{
 	Name:    "merge-request",
@@ -26,24 +28,14 @@ var mrCommand = cli.Command{
 	Usage:   "create merge-request",
 	Flags: []cli.Flag{
 		cli.StringFlag{
-			Name:        "project, p",
-			Usage:       "Project name or id",
-			Destination: &project,
-		},
-		cli.StringFlag{
 			Name:        "title, t",
 			Usage:       "Title",
 			Destination: &title,
 		},
 		cli.StringFlag{
-			Name:        "target, tg",
+			Name:        "target, T",
 			Usage:       "Target branch",
 			Destination: &target,
-		},
-		cli.StringFlag{
-			Name:        "source, s",
-			Usage:       "Source branch",
-			Destination: &source,
 		},
 	},
 	Action: action,
@@ -51,11 +43,15 @@ var mrCommand = cli.Command{
 
 func action(c *cli.Context) error {
 	config := gitlab.CurrentConfig()
+	ru, err := git.RemoteUrl()
+	errorCheck(err)
+	project, _ := gitlab.NewProjectFromUrl(ru)
+	source := git.CurrentBranch()
 	values := url.Values{}
 	values.Add("source_branch", source)
 	values.Add("target_branch", target)
 	values.Add("title", title)
-	var uri = config.Host + "/api/v4/projects/" + url.PathEscape(project) + "/merge_requests"
+	var uri = config.Host + "/api/v4/projects/" + project.UrlString() + "/merge_requests"
 	req, err := http.NewRequest("POST", uri, strings.NewReader(values.Encode()))
 	if err != nil {
 		fmt.Println(err)
@@ -71,5 +67,18 @@ func action(c *cli.Context) error {
 		return err
 	}
 	fmt.Println(res.Status)
+	if res.Status != "201 Created" {
+		body, _ := ioutil.ReadAll(res.Body)
+		defer res.Body.Close()
+		fmt.Printf("%s", body)
+		return fmt.Errorf("%s", body)
+	}
 	return nil
+}
+
+func errorCheck(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

@@ -13,18 +13,9 @@ type Client struct {
 	Config *Config
 }
 
-func getBuffer(body interface{}) (*bytes.Buffer, error) {
-	json, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	buf := bytes.NewBuffer(json)
-	return buf, nil
-}
-
 func (c *Client) Project(owner, name string) (*Project, error) {
 	id := url.PathEscape(fmt.Sprintf("%s/%s", owner, name))
-	uri := c.Config.Host + "/api/v4/projects/" + id
+	uri := c.Config.URL + "/api/v4/projects/" + id
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err
@@ -45,7 +36,7 @@ func (c *Client) Project(owner, name string) (*Project, error) {
 }
 
 func (c *Client) CreateMergeRequest(p *Project, params map[string]interface{}) (*http.Response, error) {
-	var uri = c.Config.Host + "/api/v4/projects/" + p.UrlString() + "/merge_requests"
+	var uri = c.Config.URL + "/api/v4/projects/" + p.UrlString() + "/merge_requests"
 	buf, err := getBuffer(params)
 	if err != nil {
 		return nil, err
@@ -65,6 +56,15 @@ func (c *Client) CreateMergeRequest(p *Project, params map[string]interface{}) (
 		return nil, err
 	}
 	return res, nil
+}
+
+func getBuffer(body interface{}) (*bytes.Buffer, error) {
+	json, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	buf := bytes.NewBuffer(json)
+	return buf, nil
 }
 
 func NewClient(config *Config) *Client {

@@ -6,13 +6,22 @@ import (
 	"strings"
 )
 
+type Owner struct {
+	Name string
+}
+
 type Project struct {
-	Owner string
-	Name  string
+	Owner         Owner  `json:"owner" yaml:"owner"`
+	Name          string `json:"name" yaml:"name"`
+	DefaultBranch string `json:"default_branch" yaml:"default-branch"`
+}
+
+func (p *Project) String() string {
+	return "Onwer: " + p.Owner.Name + ", Name: " + p.Name + ", Default Branch: " + p.DefaultBranch
 }
 
 func (p *Project) UrlString() string {
-	return url.PathEscape(fmt.Sprintf("%s/%s", p.Owner, p.Name))
+	return url.PathEscape(fmt.Sprintf("%s/%s", p.Owner.Name, p.Name))
 }
 
 func NewProjectFromUrl(url *url.URL) (*Project, error) {
@@ -23,14 +32,18 @@ func NewProjectFromUrl(url *url.URL) (*Project, error) {
 	}
 
 	name := strings.TrimSuffix(parts[2], ".git")
-	p := newProject(parts[1], name, url.Host, url.Scheme)
+	owner := Owner{
+		Name: parts[1],
+	}
+	p := newProject(owner, name, "")
 
 	return p, nil
 }
 
-func newProject(owner, name, host, protocol string) *Project {
+func newProject(owner Owner, name, defaultBranch string) *Project {
 	return &Project{
-		Owner: owner,
-		Name:  name,
+		Owner:         owner,
+		Name:          name,
+		DefaultBranch: defaultBranch,
 	}
 }

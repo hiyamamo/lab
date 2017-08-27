@@ -7,10 +7,7 @@ import (
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
-	"strings"
 )
 
 func init() {
@@ -45,22 +42,28 @@ func action(c *cli.Context) error {
 	config := gitlab.CurrentConfig()
 	ru, err := git.RemoteUrl()
 	errorCheck(err)
-	project, _ := gitlab.NewProjectFromUrl(ru)
-	source := git.CurrentBranch()
-	values := url.Values{}
-	values.Add("source_branch", source)
-	values.Add("target_branch", target)
-	values.Add("title", title)
-	var uri = config.Host + "/api/v4/projects/" + project.UrlString() + "/merge_requests"
-	req, err := http.NewRequest("POST", uri, strings.NewReader(values.Encode()))
-	if err != nil {
-		fmt.Println(err)
-		return err
+	project, err := config.FindProjectFromURL(ru)
+
+	errorCheck(err)
+
+	client := gitlab.NewClient(config)
+	if target == "" {
+		if project.DefaultBranch == "" {
+			project, err = client.Project(project.Owner.Name, project.Name)
+			errorCheck(err)
+			config.AddProject(project)
+			config.Save()
+		}
+		target = project.DefaultBranch
 	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("PRIVATE-Token", config.PrivateToken)
-	client := http.Client{}
-	res, err := client.Do(req)
+
+	source := git.CurrentBranch()
+	params := map[string]interface{}{
+		"source_branch": source,
+		"target_branch": target,
+		"title":         title,
+	}
+	res, err := client.CreateMergeRequest(project, params)
 
 	if err != nil {
 		log.Fatal(err)

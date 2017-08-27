@@ -40,17 +40,19 @@ var mrCommand = cli.Command{
 
 func action(c *cli.Context) error {
 	config := gitlab.CurrentConfig()
+	err := config.OpenPrompt()
+	checkError(err)
 	ru, err := git.RemoteUrl()
-	errorCheck(err)
+	checkError(err)
 	project, err := config.FindProjectFromURL(ru)
 
-	errorCheck(err)
+	checkError(err)
 
 	client := gitlab.NewClient(config)
 	if target == "" {
 		if project.DefaultBranch == "" {
 			project, err = client.Project(project.Owner.Name, project.Name)
-			errorCheck(err)
+			checkError(err)
 			config.AddProject(project)
 			config.Save()
 		}
@@ -79,7 +81,7 @@ func action(c *cli.Context) error {
 	return nil
 }
 
-func errorCheck(err error) {
+func checkError(err error) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

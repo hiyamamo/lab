@@ -1,2 +1,3 @@
 # lab
-GitLab cli client
+GitLab cli client.
+It is work in progress.

@@ -6,22 +6,22 @@ import (
 	"strings"
 )
 
-type Owner struct {
-	Name string
+type NameSpace struct {
+	Path string
 }
 
 type Project struct {
-	Owner         Owner  `json:"owner" yaml:"owner"`
-	Name          string `json:"name" yaml:"name"`
-	DefaultBranch string `json:"default_branch" yaml:"default-branch"`
+	NameSpace     NameSpace `json:"namespace" yaml:"namespace"`
+	Name          string    `json:"name" yaml:"name"`
+	DefaultBranch string    `json:"default_branch" yaml:"default-branch"`
 }
 
 func (p *Project) String() string {
-	return "Onwer: " + p.Owner.Name + ", Name: " + p.Name + ", Default Branch: " + p.DefaultBranch
+	return "Onwer: " + p.NameSpace.Path + ", Name: " + p.Name + ", Default Branch: " + p.DefaultBranch
 }
 
 func (p *Project) UrlString() string {
-	return url.PathEscape(fmt.Sprintf("%s/%s", p.Owner.Name, p.Name))
+	return url.PathEscape(fmt.Sprintf("%s/%s", p.NameSpace.Path, p.Name))
 }
 
 func NewProjectFromUrl(url *url.URL) (*Project, error) {
@@ -32,17 +32,17 @@ func NewProjectFromUrl(url *url.URL) (*Project, error) {
 	}
 
 	name := strings.TrimSuffix(parts[2], ".git")
-	owner := Owner{
-		Name: parts[1],
+	namespace := NameSpace{
+		Path: parts[1],
 	}
-	p := newProject(owner, name, "")
+	p := newProject(namespace, name, "")
 
 	return p, nil
 }
 
-func newProject(owner Owner, name, defaultBranch string) *Project {
+func newProject(namespace NameSpace, name, defaultBranch string) *Project {
 	return &Project{
-		Owner:         owner,
+		NameSpace:     namespace,
 		Name:          name,
 		DefaultBranch: defaultBranch,
 	}

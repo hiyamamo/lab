@@ -13,8 +13,8 @@ type Client struct {
 	Config *Config
 }
 
-func (c *Client) Project(owner, name string) (*Project, error) {
-	id := url.PathEscape(fmt.Sprintf("%s/%s", owner, name))
+func (c *Client) Project(namespace, name string) (*Project, error) {
+	id := url.PathEscape(fmt.Sprintf("%s/%s", namespace, name))
 	uri := c.Config.URL + "/api/v4/projects/" + id
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {

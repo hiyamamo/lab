@@ -51,7 +51,7 @@ func action(c *cli.Context) error {
 	client := gitlab.NewClient(config)
 	if target == "" {
 		if project.DefaultBranch == "" {
-			project, err = client.Project(project.Owner.Name, project.Name)
+			project, err = client.Project(project.NameSpace.Path, project.Name)
 			checkError(err)
 			config.AddProject(project)
 			config.Save()

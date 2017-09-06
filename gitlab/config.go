@@ -43,16 +43,16 @@ func (c *Config) FindProjectFromURL(url *url.URL) (p *Project, err error) {
 	if err != nil {
 		return
 	}
-	proj := c.findProject(p.Owner.Name, p.Name)
+	proj := c.findProject(p.NameSpace.Path, p.Name)
 	if proj != nil {
 		p = proj
 	}
 	return
 }
 
-func (c *Config) findProject(owner, name string) (p *Project) {
+func (c *Config) findProject(namespace, name string) (p *Project) {
 	for _, proj := range c.Projects {
-		if proj.Owner.Name == owner && proj.Name == name {
+		if proj.NameSpace.Path == namespace && proj.Name == name {
 			p = &proj
 			return
 		}

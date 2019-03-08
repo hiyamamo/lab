@@ -24,7 +24,7 @@ func (p *Project) UrlString() string {
 	return url.PathEscape(fmt.Sprintf("%s/%s", p.NameSpace.Path, p.Name))
 }
 
-func NewProjectFromUrl(url *url.URL) (*Project, error) {
+func NewProjectFromURL(url *url.URL) (*Project, error) {
 	parts := strings.SplitN(url.Path, "/", 4)
 	if len(parts) <= 2 {
 		err := fmt.Errorf("Invalid URL: %s", url)

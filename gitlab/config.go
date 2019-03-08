@@ -39,7 +39,7 @@ func (c *Config) OpenPrompt() error {
 }
 
 func (c *Config) FindProjectFromURL(url *url.URL) (p *Project, err error) {
-	p, err = NewProjectFromUrl(url)
+	p, err = NewProjectFromURL(url)
 	if err != nil {
 		return
 	}

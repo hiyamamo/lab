@@ -1,10 +1,16 @@
-hash: 703cd2c44bdd7a2e62f64f633b06774a7f96c425fcfbe668e283523ce145adea
-updated: 2017-08-26T13:14:00.039437091+09:00
+hash: d651cb6237af9ae060b206fd5f6e3be2678b9cf9b54b00177301e0669d6a1c97
+updated: 2017-08-27T23:42:16.894595845+09:00
 imports:
+- name: github.com/bmizerany/assert
+  version: b7ed37b82869576c289d7d97fb2bbd8b64a0cb28
 - name: github.com/mitchellh/go-homedir
   version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/urfave/cli
   version: cfb38830724cc34fedffe9a2a29fb54fa9169cd1
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
-testImports: []
+testImports:
+- name: github.com/kr/pretty
+  version: cfb55aafdaf3ec08f0db22699ab822c50091b1c4
+- name: github.com/kr/text
+  version: 7cafcd837844e784b526369c9bce262804aebc60
